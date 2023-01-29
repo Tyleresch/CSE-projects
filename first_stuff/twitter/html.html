@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Twitter</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Explore</a></li>
+          <li><a href="#">Notifications</a></li>
+          <li><a href="#">Messages</a></li>
+        </ul>
+      </nav>
+      <form>
+        <input type="text" placeholder="Search Twitter">
+        <button>Search</button>
+      </form>
+    </header>
+    <main>
+      <section>
+        <article>
+          <img src="profile-pic.jpg" alt="Profile Picture">
+          <h2>Username</h2>
+          <p>Tweet content...</p>
+        </article>
+        <article>
+          <img src="profile-pic.jpg" alt="Profile Picture">
+          <h2>Username</h2>
+          <p>Tweet content...</p>
+        </article>
+      </section>
+    </main>
+    <style>body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      
+      header {
+        background-color: #1da1f2;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+      }
+      
+      header nav ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+      }
+      
+      header nav ul li {
+        margin-right: 10px;
+      }
+      
+      header nav ul li a {
+        color: white;
+        text-decoration: none;
+      }
+      
+      header form {
+        display: flex;
+        align-items: center;
+      }
+      
+      header form input[type="text"] {
+        padding: 10px;
+        border: none;
+        margin-right: 10px;
+      }
+      
+      header form button {
+        background-color: white;
+        color: #1da1f2;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+      }
+      
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      main section {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      
+      main section article {
+        width: calc(33.33% - 20px);
+        background-color: white;
+        padding: 20px;
+        margin: 10px;
+        box-shadow: 0px 0px 10px #ccc;
+      }
+      
+      main section article img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      
+      main section article h2 {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+      </style>
+      <script>// Get the input element for the search form
+        const searchInput = document.querySelector("header form input[type='text']");
+        
+        // Add an event listener to the input element that listens for the "input" event
+        searchInput.addEventListener("input", (event) => {
+          // Get the value of the input element
+          const searchValue = event.target.value;
+        
+          // Get all of the tweets on the page
+          const tweets = document.querySelectorAll("main section article");
+        
+          // Iterate over each tweet
+          tweets.forEach((tweet) => {
+            // Get the text content of the tweet
+            const tweetText = tweet.querySelector("p").textContent;
+        
+            // Check if the tweet text includes the search value
+            if (tweetText.toLowerCase().includes(searchValue.toLowerCase())) {
+              // If it does, show the tweet
+              tweet.style.display = "block";
+            } else {
+              // If it doesn't, hide the tweet
+              tweet.style.display = "none";
+            }
+          });
+        });
+        </script>
+        <body>
+          <button type="button" onclick="showTweetForm()">Post a Tweet</button>
+          <div id="tweet-form" style="display:none">
+            <textarea id="tweet-message" rows="4" cols="50"></textarea>
+            <br>
+            <button type="button" onclick="postTweet()">Post</button>
+            <button type="button" onclick="hideTweetForm()">Cancel</button>
+          </div>
+          <div id="tweet-container"></div>
+          <script>
+            // Global variable to store the tweet messages
+            var tweets = [];
+      
+            function showTweetForm() {
+              // Show the tweet form
+              document.getElementById("tweet-form").style.display = "block";
+            }
+      
+            function hideTweetForm() {
+              // Hide the tweet form
+              document.getElementById("tweet-form").style.display = "none";
+            }
+      
+            function postTweet() {
+              // Get the tweet message from the input field
+              var tweetMessage = document.getElementById("tweet-message").value;
+              tweets.push(tweetMessage);
+              // Send the tweet message to the server to post it
+              // In this example, we are not sending the tweet message to any server, instead we are storing it in an array 
+              // And then displaying the tweets on the screen
+              hideTweetForm();
+              displayTweets();
+            }
+            function displayTweets() {
+              // Display the tweets on the screen
+              var tweetContainer = document.getElementById("tweet-container");
+              tweetContainer.innerHTML = "";
+              for(var i=0;i<tweets.length;i++) {
+                var tweet = tweets[i];
+                var tweetDiv = document.createElement("div");
+                tweetDiv.innerHTML = tweet;
+                tweetContainer.appendChild(tweetDiv);
+              }
+            }
+          </script>
+        </head>
+        <body>
+          <button type="button" onclick="showTweetForm()">Post a Tweet</button>
+          <div id="tweet-form" style="display:none">
+            <textarea id="tweet-message" rows="4" cols="50"></textarea>
+            <br>
+            <button type="button" onclick="postTweet()">Post</button>
+            <button type="button" onclick="hideTweetForm()">Cancel</button>
+          </div>
+          <div id="tweet-container"></div>
+  </body>
+</html>
