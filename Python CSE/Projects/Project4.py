@@ -53,7 +53,47 @@ def basetobase(B1,B2,s_in_B1):
  
 def encode_image(image,text,N):
     '''Insert docstring here.'''
+    N = int(N)
+    message = ''
+    count = N - 1
+    if image == '' or text == '':
+        return(image)
+    for i in text:
+        message += numtobase(ord(i), 2) 
+    
+    message_place = 0 
+    encoded_image = ''
+    test = 1
+    index = 0
+    for i, ch in enumerate(image):
+        index += 1
+        if test == N: 
+            if ch != message[message_place]:
+                encoded_image += message[message_place]
+            else:
+                encoded_image += ch
+            message_place += 1
+            test = 1 
+
+            if message_place >= len(message):
+                break 
+        else:
+            encoded_image += ch 
+            test += 1
+    index = index -1
+    # # print(type(i))
+    # print(index)
+    new_image = image[index:]
+    # print(new_image)
+    return(encoded_image + new_image[1:] )
+
+
+
+
+
         
+
+
     pass  # insert your code here
 
 
