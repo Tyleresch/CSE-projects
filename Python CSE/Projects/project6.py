@@ -4,23 +4,23 @@
 #The 1st function - open_file()
 #   While true loop and uses a try and except to open the file and prompts user at begining
 #The 2nd function - get_books_by_criterion()
-#   
+#   This function gets books based on certain criterion
 #The 3rd function - read_file(fp)
-#   
+#   This function skips the header than it reads the file than it sorts values and assigns them 
 #The 4th function - get_books_by_criterion(list_of_tuples, criterion, value)
-#   
+#   Retrieves the books that match a certain criterion. If there is a problem with a value or criterion parameter, don’t add the book to the return list—return an empty list. The criterion parameter is an int that represents the index of a criterion in a book tuple. 
 #The 5th function - get_books_by_criteria(list_of_tuples, category, rating, page_number)
-#   
+#   This function looks similar to the get_books_by_criterion function; the difference is that this function calls get_books_by_criterion three times, one for each of category, rating, and page number specified to select books based on all three criteria in that order (category, rating, then page number).
 #The 6th function - get_books_by_keyword(list_of_tuples, keywords)
-#   
+#   Retrieves all books whose description contains any of the keywords value. If one keyword is found, add the book tuple to the return list and move to the next book to avoid double counting a book. 
 #The 7th function - sort_authors(list_of_tuples, a_z)
-#   
+#   Create a new list where the books are sorted by author name. The a_z boolean value determines if you should return the books in descending (when a_z is False) or ascending order (when a_z is True) based on author name.
 #The 8th function - recommend_books(list_of_tuples, keywords, category, rating, page_number,  a_z = True)
-#   
+#   Retrieves all books filtered by category, rating, page number criteria and whose description contains any of the keywords. Sorts the returned list by author name. 
 #The 9th function - display_books(list_of_tuples)
-#   
+#   Displays the books along with their information, using the formats provided as constants in strings.txt. Ignore a book if its title or its authors are longer than 35 characters. 
 #The 10th function - get_option()
-#   
+#   Display a menu of options and prompt for input. Return the input if it is between 1-4 inclusive. Otherwise, it prints an error message and return None.
 #The 11th function - main()
 #   This function is just for the while loop
 ###########################################################
@@ -53,23 +53,31 @@ def open_file():
     """  Prompts the user to enter a file name and attempts to open the file in read-only mode with UTF-8 encoding. 
     If the file is found, the function returns the file pointer. 
     If the file is not found, the function displays an error message and prompts the user to try again."""
+    # loop indefinitely until a valid file name is entered
     while True:
+        # prompt the user to enter a file name
+
         file_name = input("Enter file name: ")
         try:
+            # try to open the file in read-only mode with UTF-8 encoding
             fp = open(file_name, 'r', encoding='utf-8')
             return fp
         except FileNotFoundError:
+            # if the file is not found, display an error message and prompt the user to try again
             print("\nError opening file. Please try again.")
 
 
 def read_file(fp):
     """Reads a CSV file and returns a list of tuples containing information about books, skipping the first row of headers. The function converts certain columns from the file into specific data types, such as converting the rating column to a float and the number of pages column to an integer. If any errors occur while reading the file, the function skips over the problematic row and continues reading the rest of the file. The resulting list of tuples contains the ISBN-13, title, authors, categories, description, year, rating, number of pages, and number of ratings for each book."""
     data = []
+
+    # Create a CSV reader object
     reader = csv.reader(fp)
     next(reader) # skip header
-
+    # Loop through the remaining rows in the CSV file
     for row in reader:
         try:
+            # Extract the values from the row and convert to appropriate data types
             isbn13 = row[0]
             title = row[2]
             authors = row[4]
@@ -80,11 +88,12 @@ def read_file(fp):
             num_pages = int(row[10])
             rating_count = int(row[11])
 
+            # Create a tuple containing the book information and add it to the data list
             book = (isbn13, title, authors, categories, description, year, rating, num_pages, rating_count)
             data.append(book)
         except:
             continue
-
+    # Return the list of tuples containing book information
     return data
 
 
@@ -94,6 +103,7 @@ def get_books_by_criterion(list_of_tuples, criterion, value):
     for book in list_of_tuples:
         if criterion == TITLE:
             if value.lower() == book[TITLE].lower():
+                # Return the book if it matches the criterion
                 return book
 
         elif criterion == CATEGORY and value in book[CATEGORY]:
@@ -108,6 +118,7 @@ def get_books_by_criterion(list_of_tuples, criterion, value):
 
 def get_books_by_criteria(list_of_tuples, category, rating, page_number):
     """This function selects books from a list of book data tuples that match the given criteria, where the criteria include the book category, rating, and maximum number of pages, and it returns a list of tuples containing information about the selected books; if no matches are found, an empty list is returned."""
+    #call on older functions 
     filtered_list = get_books_by_criterion(list_of_tuples, CATEGORY, category)
     filtered_list = get_books_by_criterion(filtered_list, RATING, rating)
     filtered_list = get_books_by_criterion(filtered_list, PAGES, page_number)
@@ -116,8 +127,9 @@ def get_books_by_criteria(list_of_tuples, category, rating, page_number):
 
 
 def get_books_by_keyword(list_of_tuples, keywords):
-    """This function takes in a list of book tuples and a list of keywords as arguments. It filters the book list by returning only the books that contain any of the keywords in their title or author's name. The result is returned as a list of book tuples that match the given keywords. The function has a docstring that provides a brief explanation of what it does."""
+    """This function takes in a list of book tuples and a list of keywords as arguments. It filters the book list by returning only the books that contain any of the keywords in their title or author's name. The result is returned as a list of book tuples that match the given keywords."""
     result = [book for book in list_of_tuples if any(keyword.lower() in book[4].lower() for keyword in keywords)]
+    #return the made result
     return result
 
 def sort_authors(list_of_tuples, a_z = True):
@@ -127,12 +139,13 @@ def sort_authors(list_of_tuples, a_z = True):
     
     if a_z == False:
         sorted_books = sorted(list_of_tuples, key=itemgetter(2), reverse = True)
-
+    #call on old functions
     return sorted_books
 
 
 def recommend_books(list_of_tuples, keywords, category, rating, page_number,  a_z = True):
     """This function selects books from a list of book data tuples that match the given criteria, which include book keywords, category, rating, and maximum number of pages, sorts the selected books by author name in either ascending or descending order depending on the value of the optional parameter a_z (True for ascending order, False for descending order), and returns a list of tuples containing information about the recommended books that match the given criteria."""
+    #call on older functions 
     filtered_list = get_books_by_criteria(list_of_tuples, category, rating, page_number)
     filtered_list = get_books_by_keyword(filtered_list, keywords)
     sorted_list = sort_authors(filtered_list, a_z)
@@ -145,7 +158,7 @@ def display_books(list_of_tuples):
         print("Nothing to print.")
     else:
         print("{:15s} {:35s} {:35s} {:6s} {:8s} {:15s} {:15s}".format('ISBN-13', 'Title', "Authors", "Year", "Rating", "Number Pages", "Number Ratings"))
-        
+        #set things up 
         for row in list_of_tuples:
             if len(row[1]) <= 35 and len(row[2]) <= 35:
                 isbn13 = str(row[0])
@@ -177,17 +190,17 @@ def main():
     num = get_option()
     if num not in [1,2,3,4]:
         num = get_option()
-   # print(type(num))
     while num in [1,2,3,4]:
         if num == 4:
             break 
         if num == 3:
-            #works fine but the recommend books does not work still 
+            #prompt the user 
             ture = True
             category = input("\nEnter the desired category: ")
             rating = input("\nEnter the desired rating: ")
             
             while True:
+                #this is try except to get around problem
                 try:
                     rating = float(rating)
                     break
@@ -198,6 +211,7 @@ def main():
 
             page_number = input("\nEnter the desired page number: ")
             while True:
+                #this is try except to get around problem
                 try:
                     page_number = int(page_number)
                     break
@@ -219,6 +233,7 @@ def main():
             num = get_option()
             continue 
         if num == 2:
+            #this is try except to get around problem
             while True:
                 criteria_num = input(CRITERIA_INPUT)
                 try:
@@ -245,6 +260,7 @@ def main():
                 display_books(sorted_books[0:30])
             elif criteria_num == 6:
                 while True:
+                    #this is try except to get around problem
                     try:
                         Recommend = float(Recommend)
                         break
@@ -257,6 +273,7 @@ def main():
                 display_books(sorted_books[0:30])
             elif criteria_num == 7:
                 while True:
+                    #this is try except to get around problem
                     try:
                         Recommend = int(Recommend)
                         break
@@ -272,7 +289,7 @@ def main():
         if num == 1:
             book_name = input("\nInput a book title: ")
             tuples_names = get_books_by_criterion(tuples, TITLE, book_name)
-            #print(tuples_names)
+            
             print("\nBook Details:")
             display_books([tuples_names])
             num = get_option()
