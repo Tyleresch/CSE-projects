@@ -109,6 +109,7 @@ def get_max(col, data, cities):
         max_list = []
     return result 
 
+
 def get_average(col, data, cities): 
     ''' Docstring'''
     result = []
