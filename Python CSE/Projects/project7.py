@@ -32,9 +32,8 @@ def open_files():
     file_ptrs = []
     for city in cities:
         try:
-            file_name = city.strip() + ".csv"
-            file_ptr = open(file_name, "r")
-            files.append(file_name)
+            file_ptr = open(city + ".csv", "r", encoding = "utf-8")
+            files.append(city)
             file_ptrs.append(file_ptr)
         except FileNotFoundError:
             print("\nError: File {} is not found")
@@ -109,7 +108,6 @@ def get_max(col, data, cities):
         max_list = []
     return result 
 
-
 def get_average(col, data, cities): 
     ''' Docstring'''
     result = []
@@ -136,6 +134,9 @@ def mode_helper(column_1):
     L = []
     mode = []
     for num in column_1[1:]:
+        if n_1 == 0:
+            n_1 = num
+            continue
         check = abs((n_1 - num)/ n_1)
         if check <= TOL:
             count += 1 
@@ -169,19 +170,157 @@ def get_modes(col, data, cities):
           
 def high_low_averages(data, cities, categories):
     ''' Docstring'''
-    
-    pass   # remove this line
+    result = []
+    for category in categories:
+        if category not in COLUMNS:
+            result.append(None)
+            continue
+        i = COLUMNS.index(category)
+        new_list = []
+        for city in cities:
+            i_city = cities.index(city)
+            
+            values = [row[i] for row in data[i_city] if row[i] != None]
+
+            if values:
+                high = max(values)
+                low = min(values)
+                avg = sum(values) / len(values)
+                new_list.append((city, round(avg, 2)))
+        sorted_low = sorted(new_list, key = itemgetter(1))
+        sorted_high = sorted(new_list, reverse = True, key = itemgetter(1))
+
+        result.append([sorted_low[0], sorted_high[0]])
+        
+    return result
 
 def display_statistics(col,data, cities):
     ''' Docstring'''
+    max_city = get_max(col, data, cities)
+    min_city = get_min(col, data, cities)
+    average_city = get_average(col, data, cities)
+    repeated = get_modes(col, data, cities)
+    count = 0
+    count_1 = 1
+    for city in cities:
+        min_num = min_city[count][1]
+        max_num = max_city[count][1]
+        avg_city = average_city[count][1]
+        repeated_val = repeated[count][2]
+        repeated_val_2 = repeated[count][1][0]
+        print("\t{}: ".format(city))
+        print("\tMin: {:.2f} Max: {:.2f} Avg: {:.2f}".format(min_num, max_num, avg_city))
+        print("\tMost common repeated values ({:} occurrences): {:}\n".format(repeated_val, repeated_val_2))
+        #print("\tNo modes.")
+        count +=1
+        count_1 += 1
 
-    pass   # remove this line
              
 def main():
     print(BANNER)
-    weather = input('Enter cities names: ')
-    print(MENU)
-    pass   # remove this line
+    cities, file_opener = open_files()
+    tuples = read_files(file_opener)
+    num = int(input(MENU))
+    if num not in [1,2,3,4,5,6,7]:
+        num = MENU
+    while num in [1,2,3,4,5,6,7]:
+        if num == 7:
+            print("\nThank you using this program!")
+            break 
+        elif num == 6:
+            start = input("\nEnter a starting date (in mm/dd/yyyy format): ")
+            end = input("\nEnter an ending date (in mm/dd/yyyy format): ")
+            category = input("\nEnter desired category: ").lower().split(',')
+            answer = get_data_in_range(tuples, start, end)
+            if category[0] in COLUMNS:
+                col = COLUMNS.index(category[0])
+                col_1 = COLUMNS.index(category[1])
+                name = get_min(col, answer, cities)
+                name = get_min(col_1, answer, cities)
+                name_6 = get_max(col_1, answer, cities)
+                name_6 = get_max(col, answer, cities)
+                for name_2 in name:
+                    print(name_2)
+                    print("\n\t{}: ".format(category))
+                    print("\tLowest Average: {:s} = {:.2f} Highest Average: {:s} = {:.2f}".format(name_2[0], name_2[1]))
+            elif category not in COLUMNS:
+                print("\n\t{} category is not found.".format(category))
+                category = input("\nEnter desired category: ").lower()
+        elif num == 5:
+            start = input("\nEnter a starting date (in mm/dd/yyyy format): ")
+            end = input("\nEnter an ending date (in mm/dd/yyyy format): ")
+            category = input("\nEnter desired category: ").lower()
+            answer = get_data_in_range(tuples, start, end)
+            col = COLUMNS.index(category)
+            print("\n\t{}: ".format(category))
+            if category in COLUMNS:
+                display = display_statistics(col,answer, cities)
+            elif category not in COLUMNS:
+                print("\n\t{} category is not found.".format(category))
+                category = input("\nEnter desired category: ").lower()
+            num = int(input(MENU))
+        elif num == 4:
+            start = input("\nEnter a starting date (in mm/dd/yyyy format): ")
+            end = input("\nEnter an ending date (in mm/dd/yyyy format): ")
+            category = input("\nEnter desired category: ").lower()
+            answer = get_data_in_range(tuples, start, end)
+            if category in COLUMNS:
+                col = COLUMNS.index(category)
+                name = get_modes(col, answer, cities)
+                print("\n\t{}: ".format(category))
+                for name_2 in name:
+                    print("\tMost common repeated values for {:s} ({:d} occurrences): {:}\n".format(name_2[0], name_2[2], name_2[1][0]))
+            elif category not in COLUMNS:
+                print("\n\t{} category is not found.".format(category))
+                category = input("\nEnter desired category: ").lower()
+                continue
+            num = int(input(MENU))
+        elif num == 3:
+            start = input("\nEnter a starting date (in mm/dd/yyyy format): ")
+            end = input("\nEnter an ending date (in mm/dd/yyyy format): ")
+            category = input("\nEnter desired category: ").lower()
+            answer = get_data_in_range(tuples, start, end)
+            if category in COLUMNS:
+                col = COLUMNS.index(category)
+                name = get_average(col, answer, cities)
+                print("\n\t{}: ".format(category))
+                for name_2 in name:
+                    print("\tAverage for {:s}: {:.2f}".format(name_2[0], name_2[1]))
+            elif category not in COLUMNS:
+                print("\n\t{} category is not found.".format(category))
+                category = input("\nEnter desired category: ").lower()
+            num = int(input(MENU))
+        elif num == 2:
+            start = input("\nEnter a starting date (in mm/dd/yyyy format): ")
+            end = input("\nEnter an ending date (in mm/dd/yyyy format): ")
+            category = input("\nEnter desired category: ").lower()
+            answer = get_data_in_range(tuples, start, end)
+            if category in COLUMNS:
+                col = COLUMNS.index(category)
+                name = get_min(col, answer, cities)
+                print("\n\t{}: ".format(category))
+                for name_2 in name:
+                    print("\tMin for {:s}: {:.2f}".format(name_2[0], name_2[1]))
+            elif category not in COLUMNS:
+                print("\n\t{} category is not found.".format(category))
+                category = input("\nEnter desired category: ").lower()
+            num = int(input(MENU))
+        elif num == 1:
+            start = input("\nEnter a starting date (in mm/dd/yyyy format): ")
+            end = input("\nEnter an ending date (in mm/dd/yyyy format): ")
+            category = input("\nEnter desired category: ").lower()
+            answer = get_data_in_range(tuples, start, end)
+            if category in COLUMNS:
+                col = COLUMNS.index(category)
+                name = get_max(col, answer, cities)
+                print("\n\t{}: ".format(category))
+                for name_2 in name:
+                    print("\tMax for {:s}: {:.2f}".format(name_2[0], name_2[1]))
+            elif category not in COLUMNS:
+                print("\n\t{} category is not found.".format(category))
+                category = input("\nEnter desired category: ").lower()
+            num = int(input(MENU))
+            
 
 #DO NOT CHANGE THE FOLLOWING TWO LINES OR ADD TO THEM
 #ALL USER INTERACTIONS SHOULD BE IMPLEMENTED IN THE MAIN FUNCTION
