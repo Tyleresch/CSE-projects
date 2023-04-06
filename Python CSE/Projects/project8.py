@@ -28,16 +28,18 @@ def open_file(s):
 
 def read_file(fp_games):
     ''' Docstring'''
+    readed = csv.reader(fp_games)
     next(fp_games)
 
     games_dict = {}
 
-    for row in csv.reader(fp_games):
+    for row in readed:
         name = row[0]
         date = row[1]
         developer = row[2].split(';')
         genres = row[3].split(';')
-        mode = 0 if 'single-player' in row[4].lower() else 1
+        first_mode = row[4].lower().split(';')
+        mode = 0 if 'multi-player' == first_mode[0] else 1
         price = row[5].replace(',', '')
         try:
             price = float(price) * 0.012
@@ -46,34 +48,37 @@ def read_file(fp_games):
         overall_reviews = row[6]
         reviews = int(row[7])
         percent_positive = int(row[8].replace('%', ''))
-        support = ['win_support' if row[9] == '1' else '',
-                   'mac_support' if row[10] == '1' else '',
-                   'lin_support' if row[11] == '1' else '']
+        support = []
+        if row[9] == '1':
+            support.append('win_support')
+        if row[10] == '1':
+            support.append('mac_support')
+        if row[11] == '1':
+            support.append('lin_support')
+        
+        # support = ['' if row[9] == '1' else '',
+        #            '' if row[10] == '1' else '',
+        #            '' if row[11] == '1' else '']
 
         games_dict[name] = [date, developer, genres, mode, price, overall_reviews, reviews, percent_positive, support]
 
     return games_dict
-    pass   # remove this line
+    #do 
 
 def read_discount(fp_discount):
     ''' Docstring'''
     discount_dict = {}
+    readed = csv.reader(fp_discount)
+    next(readed)
 
-    # Skip the header line
-    fp_discount.readline()
-
-    for line in fp_discount:
-        # Split the line into its comma-separated values
-        values = line.strip().split(',')
-        
-        # Check if the line has at least 5 values
-        if len(values) >= 5:
-            game_name, _, _, discount_perc, _ = values
-            # Add the game name and discount percentage to the dictionary
-            discount_dict[game_name] = round(float(discount_perc), 2)
+    for line in readed:
+        name = line[0] 
+        discount = line[1]
+        discount = float(discount)
+        discount = round(discount, 2)
+        discount_dict[name] = discount 
 
     return discount_dict
-    pass   # remove this line
 
 def in_year(master_D,year):
     ''' Docstring'''
@@ -91,9 +96,9 @@ def by_genre(master_D,genre):
     for game in master_D:
         if genre in master_D[game][2]:
             if master_D[game][5] == 'Positive':
-                filtered_games.append((game, float(master_D[game][4].replace(',', '')), master_D[game][0]))
+                filtered_games.append((game, float(master_D[game][4]), master_D[game][0]))
 
-    filtered_games.sort(key=lambda x: (-x[1], x[2]))
+    filtered_games.sort(key=lambda x: (x[1], x[2]))
 
     return [game[0] for game in filtered_games]
     pass   # remove this line
@@ -105,7 +110,7 @@ def by_dev(master_D,developer):
         if developer in info[1]:
             games_by_dev.append(game)
     sorted_games = sorted(games_by_dev, key=lambda x: (master_D[x][1], x))
-    return sorted_games[::-1]
+    return sorted_games[::1]
     pass   # remove this line
 
 def per_discount(master_D,games,discount_D): 
