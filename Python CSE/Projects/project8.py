@@ -162,6 +162,44 @@ def by_dev_with_disc(master_D,discount_D,developer):
     
              
 def main():
+    fp_games = open_file("games")
+    master_D = read_file(fp_games)
+    fp_discount = open_file("discounts")
+    discount_D = read_discount(fp_discount)
+
+    while num in [1, 2, 3, 4, 5, 6, 7]:
+        if num == 1:
+            year = int(input("Enter a year: "))
+            games = in_year(master_D, year)
+            print(', '.join(games) if games else "Nothing to print")
+        elif num == 2:
+            developer = input("Enter a developer: ")
+            games = by_dev(master_D, developer)
+            print(', '.join(games) if games else "Nothing to print")
+        elif num == 3:
+            genre = input("Enter a genre: ")
+            games = by_genre(master_D, genre)
+            print(', '.join(games) if games else "Nothing to print")
+        elif num == 4:
+            developer = input("Enter a developer: ")
+            year = int(input("Enter a year: "))
+            games = by_dev_year(master_D, discount_D, developer, year)
+            print(', '.join(games) if games else "Nothing to print")
+        elif num == 5:
+            genre = input("Enter a genre: ")
+            games = by_genre_no_disc(master_D, discount_D, genre)
+            print(', '.join(games) if games else "Nothing to print")
+        elif num == 6:
+            developer = input("Enter a developer: ")
+            games = by_dev_with_disc(master_D, discount_D, developer)
+            print(', '.join(games) if games else "Nothing to print")
+        elif num == 7:
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid option. Please try again.")
+        num = int(input(MENU))
+
     pass   # remove this line
 
 if __name__ == "__main__":
