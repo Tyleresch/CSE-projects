@@ -56,9 +56,6 @@ def read_file(fp_games):
         if row[11] == '1':
             support.append('lin_support')
         
-        # support = ['' if row[9] == '1' else '',
-        #            '' if row[10] == '1' else '',
-        #            '' if row[11] == '1' else '']
 
         games_dict[name] = [date, developer, genres, mode, price, overall_reviews, reviews, percent_positive, support]
 
@@ -91,26 +88,24 @@ def in_year(master_D,year):
 
 def by_genre(master_D,genre): 
     ''' Docstring'''
+    genre_games = {}
+    for game, info in master_D.items():
+        if genre in info[2]:
+            genre_games[game] = info[7]
+            sorted_games = sorted(genre_games.items(), key=lambda x: x[1], reverse=True)
+    return [game[0] for game in sorted_games]
 
-    filtered_games = []
-    for game in master_D:
-        if genre in master_D[game][2]:
-            if master_D[game][5] == 'Positive':
-                filtered_games.append((game, float(master_D[game][4]), master_D[game][0]))
-
-    filtered_games.sort(key=lambda x: (x[1], x[2]))
-
-    return [game[0] for game in filtered_games]
-    pass   # remove this line
+# def sort_key(game):
+#     return (-game[1], game[2])
         
 def by_dev(master_D,developer): 
     ''' Docstring'''
-    games_by_dev = []
-    for game, info in master_D.items():
-        if developer in info[1]:
-            games_by_dev.append(game)
-    sorted_games = sorted(games_by_dev, key=lambda x: (master_D[x][1], x))
-    return sorted_games[::1]
+    dev_games = []
+    for game, game_info in master_D.items():
+        if developer in game_info[1]:
+            dev_games.append((game, int(game_info[0].split('/')[-1])))
+            dev_games.sort(key=lambda x: x[1], reverse=True)
+    return [game[0] for game in dev_games]
     pass   # remove this line
 
 def per_discount(master_D,games,discount_D): 
@@ -146,26 +141,23 @@ def by_dev_year(master_D,discount_D,developer,year):
           
 def by_genre_no_disc(master_D,discount_D,genre):
     ''' Docstring'''
-    result = []
-    for game, details in master_D.items():
-        if genre in details[2] and details[4] == 0:
-            if game in discount_D:
-                continue
-            result.append((game, details[4]))
-    return [game for game, _ in sorted(result, key=lambda x: x[1])]
+    genre_games = {}
+    for game, info in master_D.items():
+        if genre in info[2] and game not in discount_D:
+            genre_games[game] = (info[4], info[7])
+            sorted_games = sorted(genre_games.items(), key=lambda x: (x[1][0], -x[1][1]))
+    return [game[0] for game in sorted_games]
     pass   # remove this line
 
 def by_dev_with_disc(master_D,discount_D,developer):
     ''' Docstring'''
-    # Filter out games by the specified developer and apply discounts
-    games = [game for game, details in master_D.items() if developer in details[1]]
-    discounted_games = {game: details[4] - discount_D.get(game, 0) for game, details in master_D.items() if game in games}
+    dev_games = {}
+    for game, info in master_D.items():
+        if developer in info[1] and game in discount_D:
+            dev_games[game] = (info[4], int(info[0].split('/')[2]))
 
-    # Sort games by price from cheapest to most expensive
-    sorted_games = sorted(discounted_games.items(), key=lambda x: x[1])
-
-    # Return a list of game names
-    return [game for game, price in sorted_games]
+    sorted_games = sorted(dev_games.items(), key=lambda x: (x[1][0], -x[1][1]))
+    return [game[0] for game in sorted_games]
     pass   # remove this line
     
              
