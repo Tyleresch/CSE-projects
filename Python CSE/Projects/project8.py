@@ -15,16 +15,16 @@ MENU = '''\nSelect from the option:
       
         
 def open_file(s):
-    ''' Docstring'''
+    ''' Docstring '''
     while True:
-        file_name = input(f"Please enter the name of the {s} file: ")
+        file_name = input(f'\nEnter {s} file: ')
         try:
             fp = open(file_name, "r", encoding="UTF-8")
             return fp
         except FileNotFoundError:
-            print(f"Error: {file_name} not found. Please try again.")
+            print('\nNo Such file')
         except:
-            print("Error: unable to open file. Please try again.")
+            print('\nNo Such file')
 
 def read_file(fp_games):
     ''' Docstring'''
@@ -164,40 +164,50 @@ def by_dev_with_disc(master_D,discount_D,developer):
 def main():
     fp_games = open_file("games")
     master_D = read_file(fp_games)
-    fp_discount = open_file("discounts")
+    fp_discount = open_file("discount")
     discount_D = read_discount(fp_discount)
 
+    num = int(input(MENU))
+    if num not in [1,2,3,4,5,6,7]:
+        print("\nInvalid option")
+        num = input(MENU)
     while num in [1, 2, 3, 4, 5, 6, 7]:
         if num == 1:
-            year = int(input("Enter a year: "))
+            year = int(input('\nWhich year: '))
+            print("\nGames released in {}:".format(year))
             games = in_year(master_D, year)
             print(', '.join(games) if games else "Nothing to print")
         elif num == 2:
-            developer = input("Enter a developer: ")
+            developer = input('\nWhich developer: ')
+            print("\nGames made by {}:".format(developer))
             games = by_dev(master_D, developer)
             print(', '.join(games) if games else "Nothing to print")
         elif num == 3:
-            genre = input("Enter a genre: ")
+            genre = input('\nWhich genre: ')
+            print("\nGames with {} genre:".format(genre))
             games = by_genre(master_D, genre)
             print(', '.join(games) if games else "Nothing to print")
         elif num == 4:
-            developer = input("Enter a developer: ")
-            year = int(input("Enter a year: "))
+            developer = input('\nWhich developer: ')
+            year = int(input('\nWhich year: '))
+            print("\nGames made by {} and released in {}:".format(developer, year))
             games = by_dev_year(master_D, discount_D, developer, year)
             print(', '.join(games) if games else "Nothing to print")
         elif num == 5:
-            genre = input("Enter a genre: ")
+            genre = input('\nWhich genre: ')
+            print("\nGames with {} genre and without a discount:".format(genre))
             games = by_genre_no_disc(master_D, discount_D, genre)
             print(', '.join(games) if games else "Nothing to print")
         elif num == 6:
-            developer = input("Enter a developer: ")
+            developer = input('\nWhich developer: ')
+            print("\nGames made by {} which offer discount:".format(developer))
             games = by_dev_with_disc(master_D, discount_D, developer)
             print(', '.join(games) if games else "Nothing to print")
         elif num == 7:
-            print("Goodbye!")
+            print("\nThank you.")
             break
         else:
-            print("Invalid option. Please try again.")
+            print("\nInvalid option")
         num = int(input(MENU))
 
     pass   # remove this line
