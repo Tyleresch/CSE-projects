@@ -7,11 +7,11 @@ import string
 def open_file():
     while True:
         try:
-            file_name = input("Enter a vocabulary file name: ")
+            file_name = input("\nInput a file name: ")
             fp = open(file_name, encoding='UTF-8')
             return fp
         except FileNotFoundError:
-            print("Error: file not found.")
+            print("\n[Error]: no such file")
     # Docstring
     pass
 
@@ -57,8 +57,22 @@ def find_completions(prefix,word_dic):
 def main():  
     fp = open_file()
     words = read_file(fp)
-    word_dic = fill_completions(words)    
-    pass
+    word_dic = fill_completions(words)
+    
+    while True:
+        prefix = input("\nEnter a prefix (# to quit): ")
+        
+        if prefix == '#':
+            print("\nBye")
+            break
+        
+        completions = find_completions(prefix, word_dic)
+        
+        if completions:
+            completions_str = ", ".join(sorted(list(completions)))
+            print(f"\nThe words that completes {prefix} are: {completions_str}")
+        else:
+            print("\nThere are no completions.")
 
 if __name__ == '__main__':
     main()
