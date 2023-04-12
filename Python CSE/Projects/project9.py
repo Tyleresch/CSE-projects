@@ -18,17 +18,16 @@ def open_file():
 def read_file(fp):
     word_set = set()
     for line in fp:
-        words = line.split()
+        words = line.strip().split()
         for word in words:
-            # Remove punctuation
             cleaned_word = ''.join(c for c in word if c not in string.punctuation)
-
-            # Check if the cleaned word has a length greater than 1 and the original word contains only alphabetic characters or punctuation
-            if len(cleaned_word) > 1 and cleaned_word.isalpha() and all(c.isalpha() or c in string.punctuation for c in word):
-                word_set.add(cleaned_word.lower())
+            subwords = cleaned_word.split('-')
+            for subword in subwords:
+                if len(subword) > 1 and subword.isalpha() and "'" not in word and "-" not in word:
+                    word_set.add(subword.lower())
     return word_set
 
-
+    
 def fill_completions(words):
     # Docstring
     word_dic = {}
@@ -39,8 +38,6 @@ def fill_completions(words):
                 word_dic[key] = set()
             word_dic[key].add(word)
     return word_dic
-
-    pass
 
 def find_completions(prefix,word_dic):
     if not prefix:
@@ -60,18 +57,7 @@ def find_completions(prefix,word_dic):
 def main():  
     fp = open_file()
     words = read_file(fp)
-    word_dic = fill_completions(words)
-
-    while True:
-        prefix = input("Enter a word prefix: ").strip().lower()
-        if not prefix:
-            break
-
-        completions = find_completions(prefix, word_dic)
-        if completions:
-            print("The completions are:", ", ".join(sorted(completions)))
-        else:
-            print("No completions found.")     
+    word_dic = fill_completions(words)    
     pass
 
 if __name__ == '__main__':
