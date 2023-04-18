@@ -54,12 +54,18 @@ def validate_move_to_foundation( tableau, from_col ):
         print("\nError, cannot move {}.".format(card_to_move))
         return False
 
-    for col in tableau:
-        if col and col[-1].suit() == card_to_move.suit() and col[-1].rank() > card_to_move.rank():
-            return True
+    other_cards = [col[-1] for i, col in enumerate(tableau) if i != from_col and col]
 
-    print("\nError, cannot move {}.".format(card_to_move))
-    return False
+    max_rank = 0
+    for card in other_cards:
+        if card.suit() == card_to_move.suit():
+            max_rank = max(max_rank, card.rank())
+
+    if card_to_move.rank() > max_rank:
+        return True
+    else:
+        print("\nError, cannot move {}.".format(card_to_move))
+        return False
 
 
     
@@ -156,10 +162,70 @@ def display( stock, tableau, foundation ):
 
 
 def get_option():
-    return []   # stub; delete and replace with your code
-        
+    user_input = input("\nInput an option (DFTRHQ): ").upper()
+
+    if user_input == "D":
+        return ["D"]
+    elif user_input.startswith("F "):
+        try:
+            x = int(user_input[2:])
+            return ["F", x]
+        except ValueError:
+            print("\nError in option:")
+            return []
+    elif user_input.startswith("T "):
+        try:
+            x, y = map(int, user_input[2:].split())
+            return ["T", x, y]
+        except ValueError:
+            print("\nError in option:")
+            return []
+    elif user_input == "R":
+        return ["R"]
+    elif user_input == "H":
+        return ["H"]
+    elif user_input == "Q":
+        return ["Q"]
+    else:
+        print("\nError in option:")
+        return []
+
 def main():
-    pass  # stub; delete and replace it with your code   
+    print(RULES)
+    print(MENU)
+
+    stock, tableau, foundation = init_game()
+    display(stock, tableau, foundation)
+
+    while True:
+        option = get_option()
+
+        if option[0] == "D":
+            deal_to_tableau(tableau, stock)
+            display(stock, tableau, foundation)
+        elif option[0] == "F":
+            from_col = option[1] - 1
+            if validate_move_to_foundation(tableau, from_col):
+                move_to_foundation(tableau, foundation, from_col)
+                display(stock, tableau, foundation)
+        elif option[0] == "T":
+            from_col, to_col = option[1] - 1, option[2] - 1
+            if validate_move_within_tableau(tableau, from_col, to_col):
+                move_within_tableau(tableau, from_col, to_col)
+                display(stock, tableau, foundation)
+        elif option[0] == "R":
+            print("=========== Restarting: new game ============")
+            stock, tableau, foundation = init_game()
+            display(stock, tableau, foundation)
+        elif option[0] == "H":
+            print(MENU)
+        elif option[0] == "Q":
+            print("\nYou have chosen to quit.")
+            break
+
+        if check_for_win(tableau, stock):
+            print("\nYou won!")
+            break
 
 if __name__ == '__main__':
      main()
