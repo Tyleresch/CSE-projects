@@ -42,47 +42,37 @@ def deal_to_tableau( tableau, stock):
         else:
             break
 
-           
-def validate_move_to_foundation( tableau, from_col ):
-    if not tableau[from_col]:  # Check if the column is empty
+
+from cards import Card
+
+def validate_move_to_foundation(tableau, from_col):
+    if not tableau[from_col]:
         print("\nError, empty column: {}".format(from_col + 1))
         return False
 
-    card_to_move = tableau[from_col][-1]  # Get the bottom card of the column
+    card_to_move = tableau[from_col][-1]
+    card_rank = card_to_move.rank()
+    card_suit = card_to_move.suit()
 
-    if card_to_move.rank() == 1:  # Check if the card is an Ace (rank 1 in the cards module)
+    if card_rank == 1:
         print("\nError, cannot move {}.".format(card_to_move))
         return False
 
-    other_cards = [col[-1] for i, col in enumerate(tableau) if i != from_col and col]
+    for column in tableau:
+        if column:
+            last_card = column[-1]
+            if last_card.suit() == card_suit:
+                if last_card.rank() == 1 or last_card.rank() > card_rank:
+                    return True
 
-    max_rank = 0
-    for card in other_cards:
-        if card.suit() == card_to_move.suit():
-            max_rank = max(max_rank, card.rank())
-
-    if card_to_move.rank() > max_rank:
-        return True
-    else:
-        print("\nError, cannot move {}.".format(card_to_move))
-        return False
-
+    print("\nError, cannot move {}.".format(card_to_move))
+    return False
 
     
 def move_to_foundation( tableau, foundation, from_col ):
-    if not tableau[from_col]:  # Check if the column is empty
-        return
-
-    card_to_move = tableau[from_col][-1]  # Get the bottom card of the column
-
-    if card_to_move.rank() == 1:  # Check if the card is an Ace (rank 1 in the cards module)
-        return
-
-    for col in tableau:
-        if col and col[-1].suit() == card_to_move.suit() and col[-1].rank() > card_to_move.rank():
-            tableau[from_col].pop()
-            foundation.append(card_to_move)
-            return
+    if validate_move_to_foundation(tableau, from_col):
+        card_to_move = tableau[from_col].pop()
+        foundation.append(card_to_move)
 
 
 def validate_move_within_tableau( tableau, from_col, to_col ):
@@ -115,17 +105,9 @@ def move_within_tableau( tableau, from_col, to_col ):
     tableau[to_col].append(card_to_move)  # Add the card to the to_col
         
 def check_for_win( tableau, stock ):
-    if stock:
-        return False
+    pass
 
-    # Check if the tableau has the four aces in the first position of each column
-    aces = ["A♥", "A♦", "A♣", "A♠"]
-    for col in tableau:
-        if not col or col[0] not in aces:
-            return False
-        aces.remove(col[0])
 
-    return True
     
 def display( stock, tableau, foundation ):
     '''Provided: Display the stock, tableau, and foundation.'''
@@ -228,4 +210,4 @@ def main():
             break
 
 if __name__ == '__main__':
-     main()
+    main()
