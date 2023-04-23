@@ -118,7 +118,7 @@ def check_for_win( tableau, stock ):
             else:
                 return False
 
-    return ace_count == 4
+    return True 
 
     
 def display( stock, tableau, foundation ):
@@ -200,7 +200,6 @@ def get_option():
 
 
 
-
 def main():
     print(RULES)
     print(MENU)
@@ -211,32 +210,33 @@ def main():
     while True:
         option = get_option()
 
-        if option[0] == "D":
+        if not option:
+            continue
+
+        command = option[0]
+
+        if command == "D":
             deal_to_tableau(tableau, stock)
-            display(stock, tableau, foundation)
-        elif option[0] == "F":
-            from_col = option[1] - 1
-            if validate_move_to_foundation(tableau, from_col):
-                move_to_foundation(tableau, foundation, from_col)
-                display(stock, tableau, foundation)
-        elif option[0] == "T":
-            from_col, to_col = option[1] - 1, option[2] - 1
-            if validate_move_within_tableau(tableau, from_col, to_col):
-                move_within_tableau(tableau, from_col, to_col)
-                display(stock, tableau, foundation)
-        elif option[0] == "R":
+        elif command == "F":
+            move_to_foundation(tableau, foundation, option[1])
+        elif command == "T":
+            move_within_tableau(tableau, option[1], option[2])
+        elif command == "R":
             print("=========== Restarting: new game ============")
             stock, tableau, foundation = init_game()
-            display(stock, tableau, foundation)
-        elif option[0] == "H":
+        elif command == "H":
             print(MENU)
-        elif option[0] == "Q":
+        elif command == "Q":
             print("\nYou have chosen to quit.")
             break
 
         if check_for_win(tableau, stock):
             print("\nYou won!")
             break
+
+        display(stock, tableau, foundation)
+
+
 
 if __name__ == '__main__':
     main()
