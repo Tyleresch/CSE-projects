@@ -155,6 +155,7 @@ def display( stock, tableau, foundation ):
         print()
 
 def get_option():
+    GRID_SIZE = 4
     original_input = input("\nInput an option (DFTRHQ): ")
     user_input = original_input.upper().split()
 
@@ -169,6 +170,8 @@ def get_option():
     elif command == "F" and len(user_input) == 2:
         try:
             x = int(user_input[1]) - 1
+            if x < 0 or x >= GRID_SIZE:
+                raise ValueError
             return ["F", x]
         except ValueError:
             print("\nError in option: {}".format(original_input))
@@ -176,6 +179,8 @@ def get_option():
     elif command == "T" and len(user_input) == 3:
         try:
             x, y = int(user_input[1]) - 1, int(user_input[2]) - 1
+            if x < 0 or y < 0 or x >= GRID_SIZE or y >= GRID_SIZE:
+                raise ValueError
             return ["T", x, y]
         except ValueError:
             print("\nError in option: {}".format(original_input))
@@ -189,6 +194,8 @@ def get_option():
     else:
         print("\nError in option: {}".format(original_input))
         return []
+
+
 
 
 
