@@ -162,17 +162,17 @@ def get_option():
         return ["D"]
     elif user_input.startswith("F "):
         try:
-            x = int(user_input[2:])
+            x = int(user_input[2:]) - 1
             return ["F", x]
         except ValueError:
-            print("\nError in option:")
+            print(f"\nError in option: {user_input}")
             return []
     elif user_input.startswith("T "):
         try:
             x, y = map(int, user_input[2:].split())
-            return ["T", x, y]
+            return ["T", x - 1, y - 1]
         except ValueError:
-            print("\nError in option:")
+            print(f"\nError in option: {user_input}")
             return []
     elif user_input == "R":
         return ["R"]
@@ -181,8 +181,15 @@ def get_option():
     elif user_input == "Q":
         return ["Q"]
     else:
-        print("\nError in option:")
+        print(f"\nError in option: {user_input}")
         return []
+
+
+
+
+
+
+
 
 def main():
     print(RULES)
