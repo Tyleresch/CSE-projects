@@ -33,7 +33,6 @@ def init_game():
     foundation = []
 
     return stock, tableau, foundation
-
     
 def deal_to_tableau( tableau, stock):
     for col in tableau:
@@ -75,19 +74,19 @@ def move_to_foundation( tableau, foundation, from_col ):
 def validate_move_within_tableau( tableau, from_col, to_col ):
     # ... rest of the function ...
 
+    # Check if the target column (to_col) is empty
+
+    if tableau[to_col]:
+        print("\nError, target column is not empty: {}".format(to_col + 1))
+        return False
+
     # Check if there is a card in the from_col
     if not tableau[from_col]:
-        print("Error, no card in column: {}".format(from_col + 1))
+        print("\nError, no card in column: {}".format(from_col + 1))
         return False
 
-    # Check if the target column (to_col) is empty
-    if tableau[to_col]:
-        print("Error, target column is not empty: {}".format(to_col + 1))
-        return False
 
     return True
-
-
 
 def move_within_tableau( tableau, from_col, to_col ):
     if not tableau[from_col]:  # Check if the from_col is empty
@@ -118,7 +117,6 @@ def check_for_win( tableau, stock ):
 
     return True 
 
-    
 def display( stock, tableau, foundation ):
     '''Provided: Display the stock, tableau, and foundation.'''
 
@@ -193,13 +191,9 @@ def get_option():
         print("\nError in option: {}".format(original_input))
         return []
 
-
-
-
-
 class GameError(Exception):
     pass
-    
+
 def main():
     print(RULES)
     print(MENU)
@@ -223,15 +217,19 @@ def main():
                 if validate_move_to_foundation(tableau, from_col):
                     move_to_foundation(tableau, foundation, from_col)
                 else:
+                    display(stock, tableau, foundation)
                     continue
             elif command == "T":
                 from_col, to_col = option[1], option[2]
                 if validate_move_within_tableau(tableau, from_col, to_col):
                     move_within_tableau(tableau, from_col, to_col)
                 else:
+                    display(stock, tableau, foundation)
                     continue
             elif command == "R":
                 print("\n=========== Restarting: new game ============")
+                print(RULES)
+                print(MENU)
                 stock, tableau, foundation = init_game()
             elif command == "H":
                 print(MENU)
@@ -247,9 +245,6 @@ def main():
             print(e)
 
         display(stock, tableau, foundation)
-
-
-
 
 if __name__ == '__main__':
     main()
