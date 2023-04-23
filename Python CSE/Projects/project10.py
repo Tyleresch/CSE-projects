@@ -71,24 +71,22 @@ def move_to_foundation( tableau, foundation, from_col ):
     if validate_move_to_foundation(tableau, from_col):
         card_to_move = tableau[from_col].pop()
         foundation.append(card_to_move)
-
-
+        
 def validate_move_within_tableau( tableau, from_col, to_col ):
-    # Check if the columns are within the range
-    if from_col < 0 or from_col > 3 or to_col < 0 or to_col > 3:
-        return False
+    # ... rest of the function ...
 
     # Check if there is a card in the from_col
     if not tableau[from_col]:
-        print(f"Error, no card in column: {from_col}")
+        print("Error, no card in column: {}".format(from_col + 1))
         return False
 
     # Check if the target column (to_col) is empty
     if tableau[to_col]:
-        print(f"Error, target column is not empty: {to_col}")
+        print("Error, target column is not empty: {}".format(to_col + 1))
         return False
 
     return True
+
 
 
 def move_within_tableau( tableau, from_col, to_col ):
@@ -199,7 +197,9 @@ def get_option():
 
 
 
-
+class GameError(Exception):
+    pass
+    
 def main():
     print(RULES)
     print(MENU)
@@ -215,26 +215,39 @@ def main():
 
         command = option[0]
 
-        if command == "D":
-            deal_to_tableau(tableau, stock)
-        elif command == "F":
-            move_to_foundation(tableau, foundation, option[1])
-        elif command == "T":
-            move_within_tableau(tableau, option[1], option[2])
-        elif command == "R":
-            print("=========== Restarting: new game ============")
-            stock, tableau, foundation = init_game()
-        elif command == "H":
-            print(MENU)
-        elif command == "Q":
-            print("\nYou have chosen to quit.")
-            break
+        try:
+            if command == "D":
+                deal_to_tableau(tableau, stock)
+            elif command == "F":
+                from_col = option[1]
+                if validate_move_to_foundation(tableau, from_col):
+                    move_to_foundation(tableau, foundation, from_col)
+                else:
+                    continue
+            elif command == "T":
+                from_col, to_col = option[1], option[2]
+                if validate_move_within_tableau(tableau, from_col, to_col):
+                    move_within_tableau(tableau, from_col, to_col)
+                else:
+                    continue
+            elif command == "R":
+                print("\n=========== Restarting: new game ============")
+                stock, tableau, foundation = init_game()
+            elif command == "H":
+                print(MENU)
+            elif command == "Q":
+                print("\nYou have chosen to quit.")
+                break
 
-        if check_for_win(tableau, stock):
-            print("\nYou won!")
-            break
+            if check_for_win(tableau, stock):
+                print("\nYou won!")
+                break
+
+        except GameError as e:
+            print(e)
 
         display(stock, tableau, foundation)
+
 
 
 
