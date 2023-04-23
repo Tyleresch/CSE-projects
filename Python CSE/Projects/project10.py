@@ -154,38 +154,41 @@ def display( stock, tableau, foundation ):
                 
         print()
 
-
 def get_option():
-    user_input = input("\nInput an option (DFTRHQ): ").upper()
+    original_input = input("\nInput an option (DFTRHQ): ")
+    user_input = original_input.upper().split()
 
-    if user_input == "D":
-        return ["D"]
-    elif user_input.startswith("F "):
-        try:
-            x = int(user_input[2:]) - 1
-            return ["F", x]
-        except ValueError:
-            print(f"\nError in option: {user_input}")
-            return []
-    elif user_input.startswith("T "):
-        try:
-            x, y = map(int, user_input[2:].split())
-            return ["T", x - 1, y - 1]
-        except ValueError:
-            print(f"\nError in option: {user_input}")
-            return []
-    elif user_input == "R":
-        return ["R"]
-    elif user_input == "H":
-        return ["H"]
-    elif user_input == "Q":
-        return ["Q"]
-    else:
-        print(f"\nError in option: {user_input}")
+    if len(user_input) == 0:
+        print("\nError in option: Empty input")
         return []
 
+    command = user_input[0]
 
-
+    if command == "D" and len(user_input) == 1:
+        return ["D"]
+    elif command == "F" and len(user_input) == 2:
+        try:
+            x = int(user_input[1]) - 1
+            return ["F", x]
+        except ValueError:
+            print("\nError in option: {}".format(original_input))
+            return []
+    elif command == "T" and len(user_input) == 3:
+        try:
+            x, y = int(user_input[1]) - 1, int(user_input[2]) - 1
+            return ["T", x, y]
+        except ValueError:
+            print("\nError in option: {}".format(original_input))
+            return []
+    elif command == "R" and len(user_input) == 1:
+        return ["R"]
+    elif command == "H" and len(user_input) == 1:
+        return ["H"]
+    elif command == "Q" and len(user_input) == 1:
+        return ["Q"]
+    else:
+        print("\nError in option: {}".format(original_input))
+        return []
 
 
 
