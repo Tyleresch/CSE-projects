@@ -43,8 +43,6 @@ def deal_to_tableau( tableau, stock):
             break
 
 
-from cards import Card
-
 def validate_move_to_foundation(tableau, from_col):
     if not tableau[from_col]:
         print("\nError, empty column: {}".format(from_col + 1))
@@ -105,8 +103,22 @@ def move_within_tableau( tableau, from_col, to_col ):
     tableau[to_col].append(card_to_move)  # Add the card to the to_col
         
 def check_for_win( tableau, stock ):
-    pass
+    if not stock.is_empty():
+        return False
 
+    ace_count = 0
+
+    for column in tableau:
+        # Iterate through each card in the column
+        for card in column:
+            # If the card is an ace, increment the ace count
+            if card.rank() == 1 or card.rank() == 14:
+                ace_count += 1
+            # If the card is not an ace, return False
+            else:
+                return False
+
+    return ace_count == 4
 
     
 def display( stock, tableau, foundation ):
