@@ -1,0 +1,12 @@
+import math
+def restock_shelves(inventory):
+    to_order = {}
+    for item, details in inventory.items():
+        stock = details['stock']
+        recent_sales = details['recent_sales']
+        average_sales = sum(recent_sales) / len(recent_sales)
+        if average_sales > stock:
+            to_order[item] = math.ceil(average_sales - stock)
+    return to_order
+
+#WRITE YOUR FUNCTION HERE. 

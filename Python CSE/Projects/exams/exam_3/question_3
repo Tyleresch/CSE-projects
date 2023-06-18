@@ -1,0 +1,60 @@
+#write your class definition only
+import math
+
+class ScrabbleTile:
+    def __init__(self, letter='E', score=1):
+        self.letter = letter[0].upper() if isinstance(letter, str) else 'E'
+        self.score = score if isinstance(score, int) else 1
+
+    def __str__(self):
+        return "{}({})".format(self.letter, self.score)
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __add__(self, other):
+        if isinstance(other, ScrabbleTile):
+            return self.score + other.score
+        elif isinstance(other, int):
+            return self.score + other
+        else:
+            return ScrabbleTile()
+
+    def __radd__(self, other):
+        if isinstance(other, int):
+            return self.score + other
+        else:
+            return ScrabbleTile()
+
+
+###############################
+########Do Not Change##########
+from code1 import ScrabbleTile
+###############################
+
+
+class Word:
+    def __init__(self, letter_list=None):
+        if letter_list is None or not isinstance(letter_list, list):
+            self.letter_list = []
+        else: 
+            self.letter_list = [tile if isinstance(tile, ScrabbleTile) else ScrabbleTile()for tile in letter_list]
+        self.score = sum(tile.score for tile in self.letter_list)
+    def __str__(self):
+        if not self.letter_list:
+            return 'Empty(0)'
+        else:
+            tile_strs = ' + '.join(str(tile) for tile in self.letter_list)
+            word_str = ''.join(tile.letter for tile in self.letter_list)
+            return "{} = {}({})".format(tile_strs, word_str, self.score)
+    def __add__(self, other):
+        if isinstance(other,ScrabbleTile):
+            self.letter_list.append(other)
+            self.score += other.score
+        elif isinstance(other, int):
+            return self.score + other
+        else:
+            default_tile = ScrabbleTile()
+            self.letter_list.append(default_tile)
+            self.score += default_tile.score
+

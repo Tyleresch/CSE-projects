@@ -1,0 +1,16 @@
+VOWELS = "aeiou"
+word = input("Enter a word: \n")
+
+if word:   
+    for i,ch in enumerate(word):
+        if ch in VOWELS:
+            pos = i
+            if pos >= 1:
+                print(word[pos:]+ word[:pos]+'ay')
+            else:
+                print(word + "way")
+            break
+    else:
+        print(word + "ay")                    
+else:
+    print("Can't convert empty string.")
